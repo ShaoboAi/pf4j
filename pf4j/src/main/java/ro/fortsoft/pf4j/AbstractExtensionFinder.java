@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,26 +15,23 @@
  */
 package ro.fortsoft.pf4j;
 
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ro.fortsoft.pf4j.util.ClassUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import ro.fortsoft.pf4j.util.ClassUtils;
 
 /**
  * @author Decebal Suiu
  */
 public abstract class AbstractExtensionFinder implements ExtensionFinder, PluginStateListener {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractExtensionFinder.class);
+    private static final Logger                 log = LoggerFactory.getLogger(AbstractExtensionFinder.class);
 
-    protected PluginManager pluginManager;
-    protected volatile Map<String, Set<String>> entries; // cache by pluginId
+    protected PluginManager                     pluginManager;
+    protected volatile Map<String, Set<String>> entries;                                                     // cache by
+                                                                                                             // pluginId
 
     public AbstractExtensionFinder(PluginManager pluginManager) {
         this.pluginManager = pluginManager;
@@ -46,8 +43,8 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
 
     @Override
     @SuppressWarnings("unchecked")
-	public <T> List<ExtensionWrapper<T>> find(Class<T> type) {
-		log.debug("Finding extensions of extension point '{}'", type.getName());
+    public <T> List<ExtensionWrapper<T>> find(Class<T> type) {
+        log.debug("Finding extensions of extension point '{}'", type.getName());
         Map<String, Set<String>> entries = getEntries();
         List<ExtensionWrapper<T>> result = new ArrayList<>();
 
@@ -59,16 +56,16 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
         }
 
         if (entries.isEmpty()) {
-        	log.debug("No extensions found for extension point '{}'", type.getName());
+            log.debug("No extensions found for extension point '{}'", type.getName());
         } else {
-        	log.debug("Found {} extensions for extension point '{}'", result.size(), type.getName());
+            log.debug("Found {} extensions for extension point '{}'", result.size(), type.getName());
         }
 
         // sort by "ordinal" property
         Collections.sort(result);
 
-		return result;
-	}
+        return result;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -78,7 +75,7 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
 
         // classpath's extensions <=> pluginId = null
         Set<String> classNames = findClassNames(pluginId);
-        if (classNames.isEmpty()) {
+        if (classNames == null || classNames.isEmpty()) {
             return result;
         }
 
@@ -129,11 +126,11 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
     }
 
     @Override
-	public List<ExtensionWrapper> find(String pluginId) {
+    public List<ExtensionWrapper> find(String pluginId) {
         log.debug("Finding extensions from plugin '{}'", pluginId);
         List<ExtensionWrapper> result = new ArrayList<>();
 
-	    Set<String> classNames = findClassNames(pluginId);
+        Set<String> classNames = findClassNames(pluginId);
         if (classNames == null || classNames.isEmpty()) {
             return result;
         }
@@ -182,7 +179,7 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
     }
 
     @Override
-	public void pluginStateChanged(PluginStateEvent event) {
+    public void pluginStateChanged(PluginStateEvent event) {
         // TODO optimize (do only for some transitions)
         // clear cache
         entries = null;
